@@ -1,17 +1,16 @@
-<%= form_with(model: comment) do |form| %>
-  <% if comment.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(comment.errors.count, "error") %> prohibited this comment from being saved:</h2>
-
-      <ul>
-        <% comment.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+<% model = [local_assigns[:commentable], comment].compact %>
+<%= form_with model: model,
+  id: dom_id_for_records(*model),
+  data: local_assigns[:data],
+  class: ["my-4"] + Array.wrap(local_assigns[:class]) do |form| %>
+  <% if form.object.errors.any? %>
+    <div class="alert alert-danger">
+      <% form.object.errors.full_messages.each do |message| %>
+        <div><%= message %></div>
+      <% end %>
     </div>
   <% end %>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
+  <%= form.rich_text_area :body, id: "#{dom_id_for_records(*model)}_body" %>
+  <%= form.submit class: "btn btn-primary" %>
+  <%= link_to "Cancel", comment, class: "btn btn-link" if form.object.persisted? %>
 <% end %>
